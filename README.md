@@ -19,3 +19,6 @@ Each column under the letters "PASS" represents a digit 0-9.
 Place the abacus in the frame where you find the map (or just use your imagination below).
 Each dot on top in each column that touches the line adds 5 to the column value,
 and each group of consecutive dots on the bottom that touches the line adds 1 to the value.
+# Credits
+Original game by *noprops*
+- Twitter: http://twitter.com/noprops

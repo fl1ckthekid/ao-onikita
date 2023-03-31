@@ -1,4 +1,4 @@
-class Sprite_Battler < RPG::Sprite
+class Sprite_Battler < Sprite
   attr_accessor :battler
   def initialize(viewport, battler = nil)
     super(viewport)

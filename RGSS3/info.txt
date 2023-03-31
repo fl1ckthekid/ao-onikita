@@ -1,3 +1,8 @@
+[XPA] Configuration.rb
+[XPA] XPA_Window.rb
+[XPA] XPA Engine Scripts.rb
+[XPA] Ruby 1.8 Methods.rb
+[XPA] RGSS RPG Module.rb
 Game_Temp.rb
 Game_System.rb
 Game_Switches.rb
@@ -101,4 +106,7 @@ fadein.rb
 title.rb
 kioku&hukki.rb
 endroll.rb
-Main.rb
+[XPA] Load RTP.rb
+[XPA] Extra Add-ons.rb
+[XPA] Tilemap.rb
+[XPA] Main.rb
