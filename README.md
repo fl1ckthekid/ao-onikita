@@ -1,5 +1,6 @@
 # Prerequisites
 - The RPG Maker XP RTP is required to run this game. Download here: http://dl.degica.com/rpgmakerweb/run-time-packages/xp_rtp104e.exe | DON'T DOWNLOAD THE .DLL FROM OTHER WEBSITES.
+- If you're using Joiplay, the RTP will be automatically downloaded for you by default. (Haven't tested with other Android emulators yet.)
 # Help on difficult puzzles
 - Piano puzzle
 
