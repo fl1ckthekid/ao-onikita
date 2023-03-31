@@ -1,27 +1,5 @@
-=begin
-================================================================================
- RGSS RPG Module
- Author: Enterbrain
- Version: 1.0
---------------------------------------------------------------------------------
- [ Description ]
- Contains all the classes and modules under 'module RPG' in RMXP. This is
- required in order to run the game. All classes and modules are obtained from
- the RMXP Help File.
-
- [ Instructions ]
- There is nothing to do here.
- Please keep this script in its current location as the default RMXP scripts
- rely on this module.
-
- It is highly advised to not modify this script unless you know what you are
- doing.
-================================================================================
-=end
 module RPG
-    # REMOVE the RGSS3 classes from this module (courtesy of IceDragon)
     constants.each { |c| remove_const(c) }
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     module Cache
       @cache = {}
       def self.load_bitmap(folder_name, filename, hue = 0)
@@ -100,7 +78,6 @@ module RPG
         GC.start
       end
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     class Sprite < ::Sprite
       @@_animations = []
       @@_reference_count = {}
@@ -481,7 +458,7 @@ module RPG
         super
       end
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Weather
       def initialize(viewport = nil)
         @type = 0
@@ -603,7 +580,7 @@ module RPG
       attr_reader :ox
       attr_reader :oy
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Map
       def initialize(width, height)
         @tileset_id = 1
@@ -630,7 +607,7 @@ module RPG
       attr_accessor :data
       attr_accessor :events
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class MapInfo
       def initialize
         @name = ""
@@ -647,7 +624,7 @@ module RPG
       attr_accessor :scroll_x
       attr_accessor :scroll_y
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Event
       def initialize(x, y)
         @id = 0
@@ -662,7 +639,7 @@ module RPG
       attr_accessor :y
       attr_accessor :pages
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Event
       class Page
         def initialize
@@ -695,7 +672,7 @@ module RPG
         attr_accessor :list
       end
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Event
       class Page
         class Condition
@@ -722,7 +699,7 @@ module RPG
         end
       end
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Event
       class Page
         class Graphic
@@ -745,7 +722,7 @@ module RPG
         end
       end
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class EventCommand
       def initialize(code = 0, indent = 0, parameters = [])
         @code = code
@@ -756,7 +733,7 @@ module RPG
       attr_accessor :indent
       attr_accessor :parameters
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class MoveRoute
       def initialize
         @repeat = true
@@ -767,7 +744,7 @@ module RPG
       attr_accessor :skippable
       attr_accessor :list
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class MoveCommand
       def initialize(code = 0, parameters = [])
         @code = code
@@ -776,7 +753,7 @@ module RPG
       attr_accessor :code
       attr_accessor :parameters
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Actor
       def initialize
         @id = 0
@@ -833,7 +810,7 @@ module RPG
       attr_accessor :armor3_fix
       attr_accessor :armor4_fix
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Class
       def initialize
         @id = 0
@@ -854,7 +831,7 @@ module RPG
       attr_accessor :state_ranks
       attr_accessor :learnings
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Class
       class Learning
         def initialize
@@ -865,7 +842,7 @@ module RPG
         attr_accessor :skill_id
       end
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Skill
       def initialize
         @id = 0
@@ -920,7 +897,7 @@ module RPG
       attr_accessor :plus_state_set
       attr_accessor :minus_state_set
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Item
       def initialize
         @id = 0
@@ -975,7 +952,7 @@ module RPG
       attr_accessor :plus_state_set
       attr_accessor :minus_state_set
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Weapon
       def initialize
         @id = 0
@@ -1014,7 +991,7 @@ module RPG
       attr_accessor :plus_state_set
       attr_accessor :minus_state_set
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Armor
       def initialize
         @id = 0
@@ -1051,7 +1028,7 @@ module RPG
       attr_accessor :guard_element_set
       attr_accessor :guard_state_set
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Enemy
       def initialize
         @id = 0
@@ -1106,7 +1083,7 @@ module RPG
       attr_accessor :armor_id
       attr_accessor :treasure_prob
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Enemy
       class Action
         def initialize
@@ -1131,7 +1108,7 @@ module RPG
         attr_accessor :rating
       end
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Troop
       def initialize
         @id = 0
@@ -1144,7 +1121,7 @@ module RPG
       attr_accessor :members
       attr_accessor :pages
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Troop
       class Member
         def initialize
@@ -1161,7 +1138,7 @@ module RPG
         attr_accessor :immortal
       end
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Troop
       class Page
         def initialize
@@ -1174,7 +1151,7 @@ module RPG
         attr_accessor :list
       end
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Troop
       class Page
         class Condition
@@ -1205,7 +1182,7 @@ module RPG
         end
       end
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class State
       def initialize
         @id = 0
@@ -1266,7 +1243,7 @@ module RPG
       attr_accessor :plus_state_set
       attr_accessor :minus_state_set
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Animation
       def initialize
         @id = 0
@@ -1287,7 +1264,7 @@ module RPG
       attr_accessor :frames
       attr_accessor :timings
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Animation
       class Frame
         def initialize
@@ -1298,7 +1275,7 @@ module RPG
         attr_accessor :cell_data
       end
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Animation
       class Timing
         def initialize
@@ -1317,7 +1294,7 @@ module RPG
         attr_accessor :condition
       end
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class Tileset
       def initialize
         @id = 0
@@ -1357,7 +1334,7 @@ module RPG
       attr_accessor :priorities
       attr_accessor :terrain_tags
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class CommonEvent
       def initialize
         @id = 0
@@ -1372,7 +1349,7 @@ module RPG
       attr_accessor :switch_id
       attr_accessor :list
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class System
       def initialize
         @magic_number = 0
@@ -1447,7 +1424,7 @@ module RPG
       attr_accessor :battler_hue
       attr_accessor :edit_map_id
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class System
       class Words
         def initialize
@@ -1494,7 +1471,7 @@ module RPG
         attr_accessor :equip
       end
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class System
       class TestBattler
         def initialize
@@ -1515,7 +1492,7 @@ module RPG
         attr_accessor :armor4_id
       end
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     class AudioFile
       def initialize(name = "", volume = 100, pitch = 100)
         @name = name
@@ -1526,5 +1503,5 @@ module RPG
       attr_accessor :volume
       attr_accessor :pitch
     end
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
   end
