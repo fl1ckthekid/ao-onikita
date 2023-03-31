@@ -150,7 +150,7 @@ class Interpreter
 end
 
 class Game_Event < Game_Character
-  attr_accessor :lag_include
+  attr_accessor:lag_include
   unless self.method_defined?('anti_lag_initialize')
     alias anti_lag_initialize initialize
   end
