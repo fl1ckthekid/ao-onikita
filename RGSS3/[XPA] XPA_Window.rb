@@ -45,18 +45,25 @@ module XPA_Window
     $xpa_window = 1.4
   
   end
+  
 end
 
 
 class Bitmap
+  
   def linear_write(dest, src_bitmap, src)
     XPA_Window::Config::LinearWrite.call(self.object_id, dest.x, dest.y,
         dest.width, dest.height, src_bitmap.object_id, src.x, src.y, src.width,
         src.height)
   end
+  
 end
+  
+
 
 module XPA_Window
+  
+  
   module Skin
     
     @@skins = {}
@@ -90,8 +97,10 @@ module XPA_Window
       @@skins[bitmap] = SkinContainer.new(bitmap) if !@@skins.has_key?(bitmap)
       return @@skins[bitmap].get_tiled_background(width, height)
     end
+    
   
     class SkinContainer
+      
       attr_reader :cursor_colors
       
       def initialize(bitmap)
@@ -242,7 +251,9 @@ module XPA_Window
         end
         return @tiled_backgrounds[size]
       end
+      
     end
+    
   end
   
   
@@ -318,15 +329,21 @@ module XPA_Window
     
   end
   
+  
   class Sprite_Cursor < ::Sprite
+    
     attr_accessor :windowskin
+    
     def initialize(*args)
       super
       @windowskin = nil
     end
+    
   end
     
+  
   class Window
+    
     def initialize(viewport = nil)
       @_rect = Rect.new(0, 0, 0, 0)
       @_visible = true
@@ -937,7 +954,11 @@ module XPA_Window
           @_sprite_contents.bitmap.width - @_sprite_contents.src_rect.x >
               @_rect.width - XPA_Window::Config::MARGIN * 2)
     end
+    
   end
+  
 end
+
 Window = XPA_Window::Window
+
 end

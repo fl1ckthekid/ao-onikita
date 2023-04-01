@@ -1,9 +1,11 @@
 if XPA_CONFIG::RTP_LOADER
 
 module Load_RTP_File
+  
   RMXP  = true 
   RMVX  = true
   RMVXA = true
+
 end
  
 module Ini
@@ -32,8 +34,13 @@ module RPG
     ReadRegistry = Win32API.new("advapi32","RegGetValue","lppllpp","l")
     def self.getRTPPath(rgss,rtpname)
       return "" if rtpname == "" or rtpname.nil?
-      reg = [0x80000002, "SOFTWARE\\Wow6432Node\\Enterbrain\\#{rgss}\\RTP", "#{rtpname}",
-        2, 0, 0, (size = [256].pack("L"))]
+      reg = [ 0x80000002,
+              "SOFTWARE\\Wow6432Node\\Enterbrain\\#{rgss}\\RTP",
+              "#{rtpname}",
+              2,
+              0,
+              0,
+              (size = [256].pack("L")) ]
       ReadRegistry.call(*reg)
       buffer = size.unpack("L")[0]
       path = reg[5] = "\0" * buffer

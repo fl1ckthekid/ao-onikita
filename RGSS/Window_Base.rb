@@ -71,7 +71,7 @@ class Window_Base < Window
     self.contents.draw_text(x, y, 120, 32, actor.name)
   end
   def draw_actor_class(actor, x, y)
-    self.contents.font.color = normal_color
+    self.contents.font.color = system_color
     self.contents.draw_text(x, y, 236, 32, actor.class_name)
   end
   def draw_actor_level(actor, x, y)

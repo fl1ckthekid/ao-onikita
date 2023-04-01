@@ -11,8 +11,6 @@ class Window_Status < Window_Base
     draw_actor_name(@actor, 4, -20)
     self.contents.font.color = system_color
     draw_actor_class(@actor, 4, 20)
-    self.contents.font.color = normal_color
-    self.contents.font.color = system_color
   end
   def dummy
     self.contents.font.color = system_color
