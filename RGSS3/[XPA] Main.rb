@@ -1,4 +1,3 @@
-
 def traceback_report
     backtrace = $!.backtrace.clone
     backtrace.each{ |bt|
@@ -33,6 +32,4 @@ def traceback_report
     $!.message.sub!($!.message, traceback_report)
     raise_traceback_error
   end
-  
-  
   exit

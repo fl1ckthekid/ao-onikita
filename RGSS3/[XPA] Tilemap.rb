@@ -10,7 +10,7 @@ SCREEN_RESOLUTION = [640, 480]
 # 1 and 5. If using a large resolution, lowering the number of priority layers
 # will help in reducing the lag.
 #-------------------------------------------------------------------------------
-MAX_PRIORITY_LAYERS = 5
+MAX_PRIORITY_LAYERS = 3
 
 #-------------------------------------------------------------------------------
 # If using a larger resolution than 640x480, the default weather effects will
@@ -53,31 +53,13 @@ TWICE_SIZE_BUTTON = Input::F5
 #-------------------------------------------------------------------------------
 HALF_SIZE_BUTTON = Input::F6
 
-#-------------------------------------------------------------------------------
-# Set the animation frame rate for autotiles. By default, all autotiles will
-# update on the 16th frame. You can change that by providing an array of numbers
-# that represent how many frames that particular frame of animation will be
-# visible for.
-# Format:
-#   when AUTOTILE_FILENAME then FRAME_DATA
-# where FRAME_DATA is an array containing the number of frames that particular
-# animation will play for before moving onto the next frame. Be sure to match
-# the number of autotile animation frames with the number of elements you put
-# into the array.
-# Check the examples below.
-#-------------------------------------------------------------------------------
 def autotile_framerate(filename)
   case filename
-  #------------------------------------------------------ START ------
-  when '001-G_Water01' then [8, 8, 8, 8]      # Animates twice as fast
-  when '009-G2_Water01' then [20, 20, 20, 20] # Animates a bit slower
-  when '024-Ocean01' then [32, 16, 32, 16]    # Sine wave effect
-  #------------------------------------------------------- END -------
-  # Don't touch any of this below
+  when '001-G_Water01' then [8, 8, 8, 8]
+  when '009-G2_Water01' then [20, 20, 20, 20]
+  when '024-Ocean01' then [32, 16, 32, 16]
   else
     return nil if filename == ''
-    # Generates array of [16, 16, ...] based on autotile width 
-    # (or nil if not animating autotile)
     w = RPG::Cache.autotile(filename).width
     h = RPG::Cache.autotile(filename).height
     if (h == 32 && w / 32 == 1) || (h == 192 && w / 256 == 1)
@@ -88,12 +70,8 @@ def autotile_framerate(filename)
   end
 end
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#                                           E N D   C O N F I G U R A T I O N
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 FULLSCREEN_METHOD = 0 unless FULLSCREEN_METHOD.between?(0,2)
 if FULLSCREEN_METHOD != 0
-  # Disable ALT+Enter
   reghotkey = Win32API.new('user32', 'RegisterHotKey', 'LIII', 'I')
   reghotkey.call(0, 1, 1, 0x0D)
 end
@@ -103,9 +81,6 @@ XPACE = RUBY_VERSION == "1.9.2"
 MAX_PRIORITY_LAYERS = 5 unless (1..5).include?(MAX_PRIORITY_LAYERS)
 
 if XPACE
-#===============================================================================
-# ** Input
-#===============================================================================
 module Input
 
   GetActiveWindow = Win32API.new('user32', 'GetActiveWindow', '', 'L')
@@ -124,35 +99,26 @@ module Input
   class << self
     alias get_fullscreen_keys update
     
-    # Check for window resize buttons
     def update
       enterkey_state = GetAsyncKeyState.call(0x0D)
-      # If ALT+ENTER was pressed, but only for modified fullscreen
       if FULLSCREEN_METHOD == 1 && @fullscreenKeysReleased && Input.press?(Input::ALT) && enterkey_state != 0
         @current_state = @current_state == FULLSCREEN_STATE ? NORMAL_STATE : FULLSCREEN_STATE
         @fullscreenKeysReleased = false
-        # Changing game window to fullscreen
         if @current_state == FULLSCREEN_STATE
           full_screen_size
         else
           normal_screen_size
         end
-      # If button to double the normal window size was pressed
       elsif TWICE_SIZE_BUTTON && Input.trigger?(TWICE_SIZE_BUTTON)
-        # Get out of fullscreen if using default method
         simulate_alt_enter if fullscreen?
-        # Check if to double or normalize the window
         @current_state = @current_state == TWICESIZE_STATE ? NORMAL_STATE : TWICESIZE_STATE
         if @current_state == TWICESIZE_STATE
           double_screen_size
         else
           normal_screen_size
         end
-      # If button to halve the normal window size was pressed
       elsif HALF_SIZE_BUTTON && Input.trigger?(HALF_SIZE_BUTTON)
-        # Get out of fullscreen if using default method
         simulate_alt_enter if fullscreen?
-        # Check if to halve or normalize the window
         @current_state = @current_state == HALFSIZE_STATE ? NORMAL_STATE : HALFSIZE_STATE
         if @current_state == HALFSIZE_STATE
           half_screen_size
@@ -160,14 +126,11 @@ module Input
           normal_screen_size
         end
       else
-        # Check if ALT or ENTER is released
         @fullscreenKeysReleased = (!Input.press?(Input::ALT) || enterkey_state == 0)
       end
-      # Call the alias
       get_fullscreen_keys
     end
     
-    # Doubles the window size based on SCREEN_RESOLUTION.
     def double_screen_size
       rw = GetSystemMetrics.call(0)
       rh = GetSystemMetrics.call(1)
@@ -181,7 +144,6 @@ module Input
       SetWindowPos.call(GetActiveWindow.call, 0, x, y, w, h, 0x0020)
     end
     
-    # Halves the window size based on SCREEN_RESOLUTION.
     def half_screen_size
       rw = GetSystemMetrics.call(0)
       rh = GetSystemMetrics.call(1)
@@ -195,7 +157,6 @@ module Input
       SetWindowPos.call(GetActiveWindow.call, 0, x, y, w, h, 0x0020)
     end
     
-    # Makes game window as large as the monitor's resolution
     def full_screen_size
       rw = GetSystemMetrics.call(0)
       rh = GetSystemMetrics.call(1)
@@ -203,7 +164,6 @@ module Input
       SetWindowPos.call(GetActiveWindow.call, 0, 0, 0, rw, rh, 0)
     end
     
-    # Reverts the game window back to normal size
     def normal_screen_size
       rw = GetSystemMetrics.call(0)
       rh = GetSystemMetrics.call(1)
@@ -215,8 +175,6 @@ module Input
       SetWindowPos.call(GetActiveWindow.call, 0, x, y, w, h, 0x0020)
     end
     
-    # Simulates the key press of ALT+Enter; called if we need to get in or out
-    # of fullscreen even though the player did not press these keys
     def simulate_alt_enter
       keybd = Win32API.new 'user32.dll', 'keybd_event', ['i', 'i', 'l', 'l'], 'v'
       keybd.call(0xA4, 0, 0, 0)
@@ -225,11 +183,8 @@ module Input
       keybd.call(0xA4, 0, 2, 0)
     end
     
-    # Check if the game is in default fullscreen
     def fullscreen?
-      # We're not using default fullscreen, so this should always be false
       return false if FULLSCREEN_METHOD != 0
-      # If current monitor resolution is 640x480, then it is fullscreen
       if GetSystemMetrics.call(0) == 640 && GetSystemMetrics.call(1) == 480
         @current_state = FULLSCREEN_STATE
         return true
@@ -239,17 +194,11 @@ module Input
   end
 end
 
-end # if XPACE
+end
 
 if !XPACE
-#===============================================================================
-# ** RPG
-# Gets the game's INI filename, in cases where it's no longer Game.ini
-#===============================================================================
 module RPG
   @@_ini_file = nil
-  # Optional parameter prepend: a string to add to the INI filename; a common
-  #                             value would be '.\\'
   def self.ini_file(prepend='')
     return prepend + @@_ini_file unless @@_ini_file.nil?
     len = Dir.pwd.size + 128
@@ -259,13 +208,9 @@ module RPG
     prepend + @@_ini_file
   end
 end
-#===============================================================================
-# ** Resolution
-#===============================================================================
 module Resolution
   
   def self.resize_game
-    # Set instance variables for calling basic Win32 functions.
     ini = Win32API.new('kernel32', 'GetPrivateProfileStringA','PPPPLP', 'L')
     title = "\0" * 256
     ini.call('Game', 'Title', '', title, 256, RPG.ini_file('.\\'))
@@ -274,49 +219,34 @@ module Resolution
     set_window_long = Win32API.new('user32', 'SetWindowLong', 'LIL', 'L')
     set_window_pos  = Win32API.new('user32', 'SetWindowPos', 'LLIIIII', 'I')
     @metrics         = Win32API.new('user32', 'GetSystemMetrics', 'I', 'I')
-    # Set default size, displaying error if size is larger than the hardware.
     default_size = Resolution.size 
-    # Apply resolution change.
     x = (@metrics.call(0) - SCREEN_RESOLUTION[0]) / 2
     y = (@metrics.call(1) - SCREEN_RESOLUTION[1]) / 2
     set_window_long.call(@window, -16, 0x14CA0000)
     set_window_pos.call(@window, 0, x, y, SCREEN_RESOLUTION[0] + 6, SCREEN_RESOLUTION[1] + 26, 0)
     @window = Win32API.new('user32', 'FindWindow', 'PP', 'I').call('RGSS Player', title)
   end
-  #--------------------------------------------------------------------------
   def self.size
-    # Returns the screen size of the machine.
     [@metrics.call(0), @metrics.call(1)]
   end
-  #--------------------------------------------------------------------------
 end
 
-end # if !XPACE
+end
 
-#===============================================================================
-# ** NilClass
-#===============================================================================
 class NilClass
   unless method_defined?(:dispose)
     def dispose; end
     def disposed?; end
   end
 end
-#===============================================================================
-# ** Bitmap
-#===============================================================================
 class Bitmap
   attr_accessor :filename
   alias set_filename_of_bitmap initialize
   def initialize(*args)
-    # Associate the bitmap with the filename of the graphic; empty string otherwise
     @filename = args.size == 1 ? File.basename(args[0], '.*') : ''
     set_filename_of_bitmap(*args)
   end
 end
-#===============================================================================
-# ** RPG::Cache
-#===============================================================================
 module RPG::Cache
   
   AUTO_INDEX = [
@@ -339,9 +269,7 @@ module RPG::Cache
   def self.autotile(filename)
     key = "Graphics/Autotiles/#{filename}"
     if !@cache.include?(key) || @cache[key].disposed? 
-      # Load the autotile graphic.
       orig_bm = self.load_bitmap('Graphics/Autotiles/', filename)
-      # Cache each configuration of this autotile.
       new_bm = self.format_autotiles(orig_bm, filename)
       if new_bm != orig_bm
         @cache[key].dispose
@@ -356,7 +284,6 @@ module RPG::Cache
       frames = bitmap.width / 96
       template = Bitmap.new(256*frames,192)
       template.filename = filename
-      # Create a bitmap to use as a template for creation.
       (0..frames-1).each{|frame|
       (0...6).each {|i| (0...8).each {|j| AUTO_INDEX[8*i+j].each {|number|
         number -= 1
@@ -371,9 +298,6 @@ module RPG::Cache
   end
   
 end
-#===============================================================================
-# ** CallBackController
-#===============================================================================
 module CallBackController
   @@callback = {}
   
@@ -400,32 +324,23 @@ module CallBackController
   
 end
 
-#===============================================================================
-# ** Viewport
-#===============================================================================
 class Viewport
   attr_accessor :offset_x, :offset_y, :attached_planes
   
   alias zer0_viewport_resize_init initialize
   def initialize(x=0, y=0, width=SCREEN_RESOLUTION[0], height=SCREEN_RESOLUTION[1], override=false)
-    # Variables needed for Viewport children (for the Plane rewrite); ignore if
-    # your game resolution is not larger than 640x480
     @offset_x = @offset_y = 0
     
     if x.is_a?(Rect)
-      # If first argument is a Rectangle, just use it as the argument.
       zer0_viewport_resize_init(x)
     elsif [x, y, width, height] == [0, 0, 640, 480] && !override 
-      # Resize fullscreen viewport, unless explicitly overridden.
       zer0_viewport_resize_init(Rect.new(0, 0, SCREEN_RESOLUTION[0], SCREEN_RESOLUTION[1]))
     else
-      # Call method normally.
       zer0_viewport_resize_init(Rect.new(x, y, width, height))
     end
   end
   
   def resize(*args)
-    # Resize the viewport. Can call with (X, Y, WIDTH, HEIGHT) or (RECT).
     if args[0].is_a?(Rect)
       args[0].x += @offset_x
       args[0].y += @offset_y
@@ -439,44 +354,31 @@ class Viewport
 
 end
 
-#===============================================================================
-# ** Tilemap
-#===============================================================================
 class Tilemap
   
   attr_accessor :tileset, :autotiles, :map_data, :priorities, :ground_sprite
   attr_reader :wrapping
-  #---------------------------------------------------------------------------
-  # Initialize
-  #---------------------------------------------------------------------------
   def initialize(viewport = nil)
-    # Ensure that all callbacks are removed to prevent memory leaks
     CallBackController.clear
     
     @viewport = viewport
     @layer_sprites = []
-    @autotile_frame = []      #[[ANIMATION_DRAW_INDEX, CURRENT_LOGICAL_FRAME], ... ]
-    @autotile_framedata = []  #[[DATA_FROM_CONFIGURATION_ABOVE], ... ]
+    @autotile_frame = []
+    @autotile_framedata = []
     
-    # Ensures that the bitmap width accounts for an extra tile
-    # and is divisible by 32
     bitmap_width = ((SCREEN_RESOLUTION[0] / 32.0).ceil + 1) * 32
-    # Create the priority layers
     ((SCREEN_RESOLUTION[1]/32.0).ceil + MAX_PRIORITY_LAYERS).times{ |i|
       s = Sprite.new(@viewport)
       s.bitmap = Bitmap.new(bitmap_width, MAX_PRIORITY_LAYERS * 32)
       @layer_sprites.push(s)
     }
     
-    # Same reasons as bitmap_width, but for height
     bitmap_height = ((SCREEN_RESOLUTION[1] / 32.0).ceil + 1) * 32
-    # Create the ground layer (priority 0)
     s = Sprite.new(@viewport)
     s.bitmap = Bitmap.new(bitmap_width, bitmap_height)
     @ground_sprite = s
     @ground_sprite.z = 0
 
-    # Initialize remaining variables
     @redraw_tilemap = true
     @tileset = nil
     @autotiles = []
@@ -496,7 +398,6 @@ class Tilemap
     @wrapping = (!DISABLE_WRAP || (XPAT_MAP_INFOS[$game_map.map_id].name =~ /.*\[[Ww][Rr][Aa][Pp]\].*/) == 0) ? 1 : 0
     create_border_sprites
     
-    # Set up the DLL calls
     @@update = Win32API.new('XPA_Tilemap', 'DrawMapsBitmap2', 'pppp', 'i')
     @@autotile_update = Win32API.new('XPA_Tilemap', 'UpdateAutotiles', 'pppp', 'i')
     @@initial_draw = Win32API.new('XPA_Tilemap', 'DrawMapsBitmap', 'pppp', 'i')
@@ -507,22 +408,14 @@ class Tilemap
     Win32API.new('XPA_Tilemap','InitBlackTile','l','i').call(@black_tile.object_id)
     
   end
-  #---------------------------------------------------------------------------
-  # Setup autotile animation data
-  #---------------------------------------------------------------------------
   def setup_autotile(i)
-    # Get animation frame rate of the autotile
     bitmap = @autotiles[i]
     frames = bitmap.nil? ? nil : autotile_framerate(bitmap.filename)
-    # If autotile doesn't animate
     if frames.nil?
       @autotile_frame[i] = [0,0]
       @autotile_framedata[i] = nil
     else
-      # Save the frame rate data
       @autotile_framedata[i] = frames
-      # Determine how long one animation cycle takes and indicate at what time
-      # the next frame of animation occurs
       total = 0
       frame_checkpoints = []
       
@@ -530,7 +423,6 @@ class Tilemap
         total += f
         frame_checkpoints[j] = total
       }
-      # Get animation frame for this autotile based on game time passed
       current_frame = Graphics.frame_count % total
       frame_checkpoints.each_index{|j| c = frame_checkpoints[j]
         next if c.nil?
@@ -541,11 +433,6 @@ class Tilemap
       }
     end
   end
-  #---------------------------------------------------------------------------
-  # Creates four 32-pixel thick black sprites to surround the map. This is
-  # only applied to maps that do not have wrapping enabled. This helps those
-  # who have screen shaking in their maps.
-  #---------------------------------------------------------------------------
   def create_border_sprites
     @border_sprites = []
     return if @wrapping == 1
@@ -566,43 +453,25 @@ class Tilemap
       @border_sprites.push(s)
     end
   end
-  #---------------------------------------------------------------------------
-  # Dispose tilemap
-  #---------------------------------------------------------------------------
   def dispose
     @layer_sprites.each{|sprite| sprite.dispose}
     @ground_sprite.dispose
     @border_sprites.each{|sprite| sprite.dispose}
     CallBackController.clear
   end
-  #---------------------------------------------------------------------------
-  # Check if disposed tilemap
-  #---------------------------------------------------------------------------
   def disposed?
     @layer_sprites[0].disposed?
   end
-  #---------------------------------------------------------------------------
-  # Get viewport
-  #---------------------------------------------------------------------------
   def viewport
     @viewport
   end
-  #---------------------------------------------------------------------------
-  # Return if tilemap is visible
-  #---------------------------------------------------------------------------
   def visible
     layer_sprites[0].visible
   end
-  #---------------------------------------------------------------------------
-  # Show or hide tilemap
-  #---------------------------------------------------------------------------
   def visible=(bool)
     @layer_sprites.each{|sprite| sprite.visible = bool}
     @ground_sprite.visible = bool
   end
-  #---------------------------------------------------------------------------
-  # Set tileset
-  #---------------------------------------------------------------------------
   def tileset=(bitmap)
     @tileset = bitmap
     if @tileset.width % 32 != 0 || @tileset.height % 32 != 0
@@ -611,9 +480,6 @@ class Tilemap
     end
     @redraw_tilemap = true
   end
-  #---------------------------------------------------------------------------
-  # Set autotiles
-  #---------------------------------------------------------------------------
   def autotiles=(array)
     CallBackController.delete(@autotiles)
     @autotiles = array
@@ -621,9 +487,6 @@ class Tilemap
     CallBackController.setup_callback(@autotiles, proc)
     @redraw_tilemap = true
   end
-  #---------------------------------------------------------------------------
-  # Set map data
-  #---------------------------------------------------------------------------
   def map_data=(table)
     CallBackController.delete(@map_data)
     @map_data = table
@@ -631,9 +494,6 @@ class Tilemap
     CallBackController.setup_callback(@map_data, proc)
     @redraw_tilemap = true
   end
-  #---------------------------------------------------------------------------
-  # Set map priorities
-  #---------------------------------------------------------------------------
   def priorities=(table)
     CallBackController.delete(@priorities)
     @priorities = table
@@ -641,21 +501,12 @@ class Tilemap
     CallBackController.setup_callback(@priorities, proc)
     @redraw_tilemap = true
   end
-  #---------------------------------------------------------------------------
-  # Get horizontal shift
-  #---------------------------------------------------------------------------
   def ox
     @ox + @ox_float
   end
-  #---------------------------------------------------------------------------
-  # Get vertical shift
-  #---------------------------------------------------------------------------
   def oy
     @oy + @oy_float
   end
-  #---------------------------------------------------------------------------
-  # Shift tilemap horizontally
-  #---------------------------------------------------------------------------
   def ox=(ox)
     @ox_float = (ox - ox.to_i) % 1
     @ox = ox.floor
@@ -664,9 +515,6 @@ class Tilemap
       s.ox = @ox
     }
   end
-  #---------------------------------------------------------------------------
-  # Shift tilemap vertically
-  #---------------------------------------------------------------------------
   def oy=(oy)
     @oy_float = (oy - oy.to_i) % 1
     @oy = oy.floor
@@ -675,12 +523,8 @@ class Tilemap
       s.oy = @oy
     }
   end
-  #---------------------------------------------------------------------------
-  # Update tilemap graphics
-  #---------------------------------------------------------------------------
   def update; end;
   def draw
-    # Figure out what the new X and Y coordinates for the ground layer would be
     x = @old_ox - @ox
     @old_ox = @ox
     x += @ground_sprite.x
@@ -689,45 +533,35 @@ class Tilemap
     @old_oy = @oy
     y += @ground_sprite.y
 
-    # No reason to do sprite shifting if we're just redrawing everything
     if !@redraw_tilemap
-      # If layers would be too far to the left
       if x < @viewport.ox - 31
-        # If still too far, then force redraw
         if x + 32 < @viewport.ox - 31
           @redraw_tilemap = true
         else
-          # Shift all layers right by 32 and clear out left-most column
           x += 32
           @ground_sprite.bitmap.fill_rect(0, 0, 32, @ground_sprite.bitmap.height, Color.new(0,0,0,0))
           @layer_sprites.each{|sprite| 
             sprite.bitmap.fill_rect(0, 0, 32, sprite.bitmap.height, Color.new(0,0,0,0))
           }
-          @shift += 1 # Redraw right column bit-flag (0001)
+          @shift += 1
         end
-      # If layers would be too far to the right
       elsif x > @viewport.ox
-        # If still too far, then force redraw
         if x - 32 > @viewport.ox
           @redraw_tilemap = true
         else
-          # Shift all layers left by 32 and clear out right-most column
           x -= 32
           @ground_sprite.bitmap.fill_rect(@ground_sprite.bitmap.width - 32, 0, 32, @ground_sprite.bitmap.height, Color.new(0,0,0,0))
           @layer_sprites.each{|sprite| 
             sprite.bitmap.fill_rect(sprite.bitmap.width - 32, 0, 32, sprite.bitmap.height, Color.new(0,0,0,0))
           }
-          @shift += 2 # Redraw left column bit-flag (0010)
+          @shift += 2
         end
       end
-      # Apply the change in X to the layers
       if !@redraw_tilemap
         @ground_sprite.x = x
         @layer_sprites.each{|sprite| sprite.x = x}
 
-        # If layers would be too far up
         if y < @viewport.oy - 31
-          # If still too far, then force redraw
           if y + 32 < @viewport.oy - 31
             @redraw_tilemap = true
           else 
@@ -735,17 +569,14 @@ class Tilemap
             layer = @layer_sprites.shift
             layer.bitmap.clear
             @layer_sprites.push(layer)
-            # Clear out the rows in the layers to prepare for drawing in #update
             width = @layer_sprites[0].bitmap.width
             num = @layer_sprites.size
             (1..MAX_PRIORITY_LAYERS).each{ |index|
               @layer_sprites[num-index].bitmap.fill_rect(0, (index - 1) * 32, width, 32, Color.new(0,0,0,0))
             }
-            @shift += 4 # Redraw bottom row bit-flag (0100)
+            @shift += 4
           end
-        # If layers would be too far down
         elsif y > @viewport.oy
-          # If still too far, then force redraw
           if y - 32 > @viewport.oy
             @redraw_tilemap = true
           else
@@ -753,15 +584,13 @@ class Tilemap
             layer = @layer_sprites.pop
             layer.bitmap.clear
             @layer_sprites.unshift(layer)
-            # Clear out the rows in the layers to prepare for drawing in #update
             width = @layer_sprites[0].bitmap.width
             (1...MAX_PRIORITY_LAYERS).each{ |index|
               @layer_sprites[index].bitmap.fill_rect(0, (MAX_PRIORITY_LAYERS - 1 - index) * 32, width, 32, Color.new(0,0,0,0))
             }
-            @shift += 8 # Redraw top row bit-flag (1000)
+            @shift += 8
           end
         end
-        # Apply the change to layers' Y and Z values
         if !@redraw_tilemap
           @ground_sprite.y = y
           @layer_sprites.each_index{ |i| sprite = @layer_sprites[i]
@@ -773,14 +602,10 @@ class Tilemap
     end
 
     autotile_need_update = []
-    # Update autotile animation frames
     for i in 0..6
       autotile_need_update[i] = false
-      # If this autotile doesn't animate, skip
       next if @autotile_framedata[i].nil?
-      # Reduce frame count
       @autotile_frame[i][1] -= 1
-      # Autotile requires update
       if @autotile_frame[i][1] == 0
         @autotile_frame[i][0] = (@autotile_frame[i][0] + 1) % @autotile_framedata[i].size
         @autotile_frame[i][1] = @autotile_framedata[i][@autotile_frame[i][0]]
@@ -789,32 +614,23 @@ class Tilemap
     end
     
     
-    # Stop the update unless redrawing, there is shifting, or an autotile needs to update
     return unless @redraw_tilemap || @shift != 0 || !autotile_need_update.index(true).nil?
 
-    # Set up the array for the priority layers
     layers = [@layer_sprites.size + 1]
-    # Insert higher priority layers into the array in order (least to most y-value sprite)
     @layer_sprites.each{|sprite| layers.push(sprite.bitmap.object_id) }
-    # Insert ground layer last in the array
     layers.push(@ground_sprite.bitmap.object_id)
-    # Load main tileset and autotile bitmap graphics into array
     tile_bms = [self.tileset.object_id]
     self.autotiles.each{|autotile| tile_bms.push(autotile.object_id) }
-    # Store autotile animation frame data
     autotiledata = []
     for i in 0..6
       autotiledata.push(@autotile_frame[i][0])
       autotiledata.push(autotile_need_update[i] ? 1 : 0)
     end
-    # Fills in remaining information of other tilemaps
     misc_data = [@ox + @viewport.ox, @oy + @viewport.oy,
       self.map_data.object_id, self.priorities.object_id, @shift, 
       MAX_PRIORITY_LAYERS, @wrapping]
     
-    # If forcing fresh redraw of the map (or drawing for first time)
     if @redraw_tilemap
-      # Initialize layer sprite positions and clear them for drawing
       @ground_sprite.bitmap.clear
       @ground_sprite.x = (@viewport.ox - @viewport.ox % 32) - (@ox % 32)
       @ground_sprite.x += 32 if @ground_sprite.x < @viewport.ox - 31
@@ -829,51 +645,36 @@ class Tilemap
         layer.y = @ground_sprite.y - y_buffer + 32 * i
         layer.z = layer.y + z_buffer
       }
-      # Make DLL call
       @@initial_draw.call(layers.pack("L*"), tile_bms.pack("L*"), autotiledata.pack("L*"), misc_data.pack("L*"))
     elsif @shift != 0
-      # Update for shifting
       @@update.call(layers.pack("L*"), tile_bms.pack("L*"), autotiledata.pack("L*"), misc_data.pack("L*"))
     end
-    # Check for autotile updates (at least one autotile needs an update)
-    # No need if redrawn tilemap since it already handled the updated autotiles
     if !@redraw_tilemap && !autotile_need_update.index(true).nil?
       @@autotile_update.call(layers.pack("L*"), tile_bms.pack("L*"), autotiledata.pack("L*"), misc_data.pack("L*"))
     end
-    # Turn off flag
     @redraw_tilemap = false
-    # Reset shift flag
     @shift = 0
   end
   
 end
-#===============================================================================
-# ** Game_Player
-#===============================================================================
 class Game_Player
   
-  CENTER_X = ((SCREEN_RESOLUTION[0] / 2) - 16) * 4    # Center screen x-coordinate * 4
-  CENTER_Y = ((SCREEN_RESOLUTION[1] / 2) - 16) * 4    # Center screen y-coordinate * 4
+  CENTER_X = ((SCREEN_RESOLUTION[0] / 2) - 16) * 4
+  CENTER_Y = ((SCREEN_RESOLUTION[1] / 2) - 16) * 4
   
   def center(x, y)
-    # Recalculate the screen center based on the new resolution.
     max_x = (($game_map.width - (SCREEN_RESOLUTION[0]/32.0)) * 128).to_i
     max_y = (($game_map.height - (SCREEN_RESOLUTION[1]/32.0)) * 128).to_i
     $game_map.display_x = [0, [x * 128 - CENTER_X, max_x].min].max
     $game_map.display_y = [0, [y * 128 - CENTER_Y, max_y].min].max
   end
 end
-#===============================================================================
-# ** Game_Map
-#===============================================================================
 class Game_Map
   alias zer0_map_edge_setup setup
   def setup(map_id)
     zer0_map_edge_setup(map_id)
-    # Find the displayed area of the map in tiles. No calculating every step.
     @map_edge = [self.width - (SCREEN_RESOLUTION[0]/32.0), self.height - (SCREEN_RESOLUTION[1]/32.0)]
     @map_edge.collect! {|size| size < 0 ? 0 : (size * 128).round }
-    # Change the map center if map is smaller than the resolution
     if $game_map.width < SCREEN_RESOLUTION[0] / 32
       Game_Player.const_set(:CENTER_X, $game_map.width * 128)
     else
@@ -891,7 +692,6 @@ class Game_Map
     pre_alias = @display_y + distance
     scroll_down_xpat(distance)
     @display_y = pre_alias if @display_y == (self.height - 15) * 128
-    # Find point that the map edge meets the screen edge, using custom size.
     @display_y = [@display_y, @map_edge[1]].min
   end
 
@@ -900,15 +700,10 @@ class Game_Map
     pre_alias = @display_x + distance
     scroll_right_xpat(distance)
     @display_x = pre_alias if @display_x == (self.width - 20) * 128
-    # Find point that the map edge meets the screen edge, using custom size.
     @display_x = [@display_x, @map_edge[0]].min
   end
 end
 
-# Override set-methods to allow callbacks (necessary for Tilemap)
-#===============================================================================
-# ** Array
-#===============================================================================
 class Array
   alias flag_changes_to_set []=
   def []=(x, y)
@@ -916,9 +711,6 @@ class Array
     CallBackController.call(self, x, y)
   end
 end
-#===============================================================================
-# ** Table
-#===============================================================================
 class Table
   alias flag_changes_to_set []=
   def []=(*args)
@@ -928,9 +720,6 @@ class Table
 end
 
 if WEATHER_ADJUSTMENT
-#===============================================================================
-# ** RPG::Weather
-#===============================================================================
 class RPG::Weather
   
   alias add_more_weather_sprites initialize
@@ -1014,16 +803,7 @@ class RPG::Weather
   end
   
 end
-#===============================================================================
-# ** Game_Screen
-#===============================================================================
 class Game_Screen
-  #--------------------------------------------------------------------------
-  # * Set Weather
-  #     type : type
-  #     power : strength
-  #     duration : time
-  #--------------------------------------------------------------------------
   def weather(type, power, duration)
     @weather_type_target = type
     if @weather_type_target != 0
@@ -1044,16 +824,10 @@ class Game_Screen
   
 end
 
-end # if WEATHER_ADJUSTMENT
-#===============================================================================
-# ** Spriteset_Map
-#===============================================================================
+end
 class Spriteset_Map
 
   alias init_for_centered_small_maps initialize
-  #---------------------------------------------------------------------------
-  # Resize and reposition viewport so that it fits smaller maps
-  #---------------------------------------------------------------------------
   def initialize
     @center_offsets = [0,0]
     if $game_map.width < (SCREEN_RESOLUTION[0] / 32.0).ceil
@@ -1071,10 +845,6 @@ class Spriteset_Map
     h = [$game_map.height * 32 , SCREEN_RESOLUTION[1]].min
     @viewport1.resize(x,y,w,h)
   end
-  #---------------------------------------------------------------------------
-  # Puts the tilemap update method at the end, ensuring that both
-  # @tilemap.ox/oy and @viewport1.ox/oy are set.
-  #---------------------------------------------------------------------------
   alias update_tilemap_for_real update
   def update
     update_tilemap_for_real
@@ -1082,15 +852,8 @@ class Spriteset_Map
   end
 end
 
-# XP does not have a snap_to_bitmap method built-in, so let's define it
 unless XPACE && SCREEN_RESOLUTION != [640, 480]
-  #=============================================================================
-  # ** Bitmap
-  #=============================================================================
   class Bitmap
-    #---------------------------------------------------------------------------
-    # ● New method: address
-    #---------------------------------------------------------------------------
     def address
       @rtlmemory_pi ||= Win32API.new('kernel32','RtlMoveMemory','pii','i')
       @address ||= (  @rtlmemory_pi.call(a="\0"*4, __id__*2+16, 4)
@@ -1099,16 +862,10 @@ unless XPACE && SCREEN_RESOLUTION != [640, 480]
                         a.unpack('L')[0]    )
     end
   end
-  #=============================================================================
-  # ** Graphics
-  #=============================================================================
   module Graphics
     class << self
       define_method(:width)  { SCREEN_RESOLUTION[0] }
       define_method(:height) { SCREEN_RESOLUTION[1] }
-      #-----------------------------------------------------------------------
-      # * snap_to_bitmap
-      #-----------------------------------------------------------------------
       def snap_to_bitmap
         @window      ||= Win32API.new('user32','GetActiveWindow', '', 'L')
         @getdc       ||= Win32API.new('user32','GetDC','i','i')
@@ -1129,7 +886,6 @@ unless XPACE && SCREEN_RESOLUTION != [640, 480]
         @deleteobject.call(hDC)
         return bitmap
       end  
-      # RGSS3 method
       def wait(frame=1)
         frame.times {|s| update }
       end
@@ -1138,10 +894,6 @@ unless XPACE && SCREEN_RESOLUTION != [640, 480]
 end
 
 if SCREEN_RESOLUTION != [640, 480]
-#===============================================================================
-# ** Graphics
-# Define new transition method to support games not in the standard resolution
-#===============================================================================
   module Graphics
     @@transition = Win32API.new('XPA_Tilemap', 'Transition', 'lliii', 'i')
     @@transition_rect = Rect.new(0,0, SCREEN_RESOLUTION[0], SCREEN_RESOLUTION[1])
@@ -1158,7 +910,6 @@ if SCREEN_RESOLUTION != [640, 480]
       end
       
       def transition(duration=12, filename='', vague=40)
-        # Invalid filename
         if filename && !filename.empty?
           transition_bitmap = Bitmap.new(filename) rescue nil
           if transition_bitmap.nil?
@@ -1167,7 +918,6 @@ if SCREEN_RESOLUTION != [640, 480]
           end
         end
         @@frozen_sprite.opacity = 255
-        # Default fade
         if filename.nil? || filename.empty?
           interval = 255.0 / duration
           duration.times do |i|
@@ -1175,7 +925,6 @@ if SCREEN_RESOLUTION != [640, 480]
             Graphics.update
           end
         else
-          # Transition graphic
           src_rect = Rect.new(0,0,transition_bitmap.width, transition_bitmap.height)
           @@transition_bitmap.stretch_blt(@@transition_rect, transition_bitmap, src_rect)
           transition_bitmap.dispose
@@ -1191,10 +940,7 @@ if SCREEN_RESOLUTION != [640, 480]
   end
 end
 
-# The following script will only be enabled if the resolution is bigger than the
-# default OR if the game does not want certain maps to wrap around.
 if DISABLE_WRAP || SCREEN_RESOLUTION[0] > 640 || SCREEN_RESOLUTION[1] > 480
-#--------------------------------------------[Unlimited Resolution by Hime]-----
 =begin
 #===============================================================================
  Title: Unlimited Resolution 

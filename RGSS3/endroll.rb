@@ -111,6 +111,7 @@ class Scene_Endroll
       "The Matchmakers 2nd (ザ・マッチメイカァズ2nd)",
       "http://osabisi.sakura.ne.jp/m2/",
       
+      "",
       "TRANSLATION",
       "",
       "Benedikt Grosser (Sephy)",

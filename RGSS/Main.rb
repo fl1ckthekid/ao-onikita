@@ -1,5 +1,6 @@
 begin
   Graphics.freeze
+  Graphics.frame_rate = 48
   $scene = Scene_Title.new
   while $scene != nil
     $scene.main

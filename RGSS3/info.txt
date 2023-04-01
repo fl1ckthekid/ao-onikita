@@ -73,7 +73,6 @@ Interpreter 4.rb
 Interpreter 5.rb
 Interpreter 6.rb
 Interpreter 7.rb
-AntiLag.rb
 Scene_Title.rb
 Scene_Map.rb
 Scene_Menu.rb
@@ -93,6 +92,7 @@ Scene_Shop.rb
 Scene_Name.rb
 Scene_Gameover.rb
 Scene_Debug.rb
+AntiLag.rb
 RPGgraphic.rb
 Damagepop.rb
 XRXS.rb

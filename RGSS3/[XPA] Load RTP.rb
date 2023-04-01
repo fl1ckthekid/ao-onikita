@@ -1,11 +1,9 @@
 if XPA_CONFIG::RTP_LOADER
 
 module Load_RTP_File
-  
   RMXP  = true 
-  RMVX  = true
-  RMVXA = true
-
+  RMVX  = false
+  RMVXA = false
 end
  
 module Ini
