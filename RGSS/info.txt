@@ -68,6 +68,7 @@ Interpreter 4.rb
 Interpreter 5.rb
 Interpreter 6.rb
 Interpreter 7.rb
+AntiLag.rb
 Scene_Title.rb
 Scene_Map.rb
 Scene_Menu.rb

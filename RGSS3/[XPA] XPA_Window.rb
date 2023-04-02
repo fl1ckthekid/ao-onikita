@@ -14,28 +14,28 @@ module XPA_Window
     BACKGROUND_RECT = Rect.new(0, 0, 128, 128)
     CURSOR_RECT = Rect.new(128, 64, 32, 32)
     BORDER_RECTS = [
-        Rect.new(144, 0, 32, 16),
-        Rect.new(144, 48, 32, 16),
-        Rect.new(128, 16, 16, 32),
-        Rect.new(176, 16, 16, 32)
+      Rect.new(144, 0, 32, 16),
+      Rect.new(144, 48, 32, 16),
+      Rect.new(128, 16, 16, 32),
+      Rect.new(176, 16, 16, 32)
     ]
     CORNER_RECTS = [
-        Rect.new(128, 0, 16, 16),
-        Rect.new(176, 0, 16, 16),
-        Rect.new(128, 48, 16, 16),
-        Rect.new(176, 48, 16, 16)
+      Rect.new(128, 0, 16, 16),
+      Rect.new(176, 0, 16, 16),
+      Rect.new(128, 48, 16, 16),
+      Rect.new(176, 48, 16, 16)
     ]
     ARROW_RECTS = [
-        Rect.new(152, 16, 16, 8),
-        Rect.new(152, 40, 16, 8),
-        Rect.new(144, 24, 8, 16),
-        Rect.new(168, 24, 8, 16)
+      Rect.new(152, 16, 16, 8),
+      Rect.new(152, 40, 16, 8),
+      Rect.new(144, 24, 8, 16),
+      Rect.new(168, 24, 8, 16)
     ]
     PAUSE_RECTS = [
-        Rect.new(160, 64, 16, 16),
-        Rect.new(176, 64, 16, 16),
-        Rect.new(160, 80, 16, 16),
-        Rect.new(176, 80, 16, 16)
+      Rect.new(160, 64, 16, 16),
+      Rect.new(176, 64, 16, 16),
+      Rect.new(160, 80, 16, 16),
+      Rect.new(176, 80, 16, 16)
     ]
     LinearWrite = Win32API.new('System/XPA_Window', 'LinearWrite', 'liiiiliiii', 'i')
     MAX_BORDERS = 4
@@ -43,29 +43,19 @@ module XPA_Window
     MAX_ARROWS = 4
     
     $xpa_window = 1.4
-  
   end
-  
 end
 
 
 class Bitmap
-  
   def linear_write(dest, src_bitmap, src)
     XPA_Window::Config::LinearWrite.call(self.object_id, dest.x, dest.y,
-        dest.width, dest.height, src_bitmap.object_id, src.x, src.y, src.width,
-        src.height)
+      dest.width, dest.height, src_bitmap.object_id, src.x, src.y, src.width, src.height)
   end
-  
 end
-  
-
 
 module XPA_Window
-  
-  
   module Skin
-    
     @@skins = {}
     
     def self.get_border_horizontal(bitmap, index, width)
@@ -97,11 +87,9 @@ module XPA_Window
       @@skins[bitmap] = SkinContainer.new(bitmap) if !@@skins.has_key?(bitmap)
       return @@skins[bitmap].get_tiled_background(width, height)
     end
-    
-  
+
     class SkinContainer
-      
-      attr_reader :cursor_colors
+      attr_reader:cursor_colors
       
       def initialize(bitmap)
         @bitmap = bitmap
@@ -109,7 +97,7 @@ module XPA_Window
         @background_tiled = nil
         @cursors = {}
         @background_base = Bitmap.new(XPA_Window::Config::BACKGROUND_RECT.width,
-            XPA_Window::Config::BACKGROUND_RECT.height)
+          XPA_Window::Config::BACKGROUND_RECT.height)
         @background_base.blt(0, 0, @bitmap, XPA_Window::Config::BACKGROUND_RECT)
         @backgrounds = {}
         @tiled_backgrounds = {}
@@ -159,7 +147,7 @@ module XPA_Window
         if @borders[index].width < pot_width
           old_bitmap = @borders[index]
           @borders[index] = Bitmap.new(pot_width,
-              XPA_Window::Config::BORDER_RECTS[index].height)
+            XPA_Window::Config::BORDER_RECTS[index].height)
           self._extend_width(@borders[index], old_bitmap)
         end
         return @borders[index]
@@ -172,7 +160,7 @@ module XPA_Window
         if @borders[index].height < pot_height
           old_bitmap = @borders[index]
           @borders[index] = Bitmap.new(
-              XPA_Window::Config::BORDER_RECTS[index].width, pot_height)
+            XPA_Window::Config::BORDER_RECTS[index].width, pot_height)
           self._extend_height(@borders[index], old_bitmap)
         end
         return @borders[index]
@@ -195,28 +183,24 @@ module XPA_Window
           b_bottom = rect.height - c
           cursor.blt(0, 0, @bitmap, Rect.new(rect.x, rect.y, c, c))
           cursor.blt(right, 0, @bitmap, Rect.new(rect.x + b_right, rect.y, c, c))
-          cursor.blt(0, bottom, @bitmap, Rect.new(rect.x, rect.y + b_bottom, c,
-              c))
+          cursor.blt(0, bottom, @bitmap, Rect.new(rect.x, rect.y + b_bottom, c, c))
           cursor.blt(right, bottom, @bitmap, Rect.new(rect.x + b_right,
-              rect.y + b_bottom, c, c))
+            rect.y + b_bottom, c, c))
           if width > c2
             cursor.stretch_blt(Rect.new(c, 0, width - c2, c),
-                @bitmap, Rect.new(rect.x + c, rect.y, rect.width - c2, c))
+              @bitmap, Rect.new(rect.x + c, rect.y, rect.width - c2, c))
             cursor.stretch_blt(Rect.new(c, bottom, width - c2, c),
-                @bitmap, Rect.new(rect.x + c, rect.y + b_bottom, rect.width - c2,
-                c))
+              @bitmap, Rect.new(rect.x + c, rect.y + b_bottom, rect.width - c2, c))
           end
           if height > c2
             cursor.stretch_blt(Rect.new(0, c, c, height - c2),
-                @bitmap, Rect.new(rect.x, rect.y + c, c, rect.height - c2))
+              @bitmap, Rect.new(rect.x, rect.y + c, c, rect.height - c2))
             cursor.stretch_blt(Rect.new(right, c, c, height - c2),
-                @bitmap, Rect.new(rect.x + b_right, rect.y + c, c,
-                rect.height - c2))
+              @bitmap, Rect.new(rect.x + b_right, rect.y + c, c, rect.height - c2))
           end
           if width > c2 && height > c2
             cursor.linear_write(Rect.new(c, c, width - c2, height - c2),
-                @bitmap, Rect.new(c + rect.x, c + rect.y, rect.width - c2,
-                rect.height - c2))
+              @bitmap, Rect.new(c + rect.x, c + rect.y, rect.width - c2, rect.height - c2))
           end
         end
         return @cursors[size]
@@ -231,7 +215,7 @@ module XPA_Window
           background = Bitmap.new(width, height)
           @backgrounds[size] = background
           background.linear_write(Rect.new(0, 0, width, height),
-              @bitmap, XPA_Window::Config::BACKGROUND_RECT)
+            @bitmap, XPA_Window::Config::BACKGROUND_RECT)
         end
         return @backgrounds[size]
       end
@@ -251,14 +235,10 @@ module XPA_Window
         end
         return @tiled_backgrounds[size]
       end
-      
     end
-    
   end
-  
-  
+
   class TrackingRect < Rect
-    
     def initialize(window, rect, sprite)
       super(0, 0, 0, 0)
       @_window = window
@@ -326,24 +306,17 @@ module XPA_Window
     def refresh
       self.set(self.x, self.y, self.width, self.height)
     end
-    
   end
-  
-  
+
   class Sprite_Cursor < ::Sprite
-    
     attr_accessor :windowskin
-    
     def initialize(*args)
       super
       @windowskin = nil
     end
-    
   end
-    
-  
+
   class Window
-    
     def initialize(viewport = nil)
       @_rect = Rect.new(0, 0, 0, 0)
       @_visible = true
@@ -364,15 +337,15 @@ module XPA_Window
       @_sprite_background = Sprite.new(@_viewport)
       @_sprite_borders = []
       (0...XPA_Window::Config::MAX_BORDERS).each {|i|
-          @_sprite_borders.push(Sprite.new(@_viewport))
+        @_sprite_borders.push(Sprite.new(@_viewport))
       }
       @_sprite_corners = []
       (0...XPA_Window::Config::MAX_CORNERS).each {|i|
-          @_sprite_corners.push(Sprite.new(@_viewport))
+        @_sprite_corners.push(Sprite.new(@_viewport))
       }
       @_sprite_arrows = []
       (0...XPA_Window::Config::MAX_ARROWS).each {|i|
-          @_sprite_arrows.push(Sprite.new(@_viewport))
+        @_sprite_arrows.push(Sprite.new(@_viewport))
       }
       @_sprite_cursor = Sprite_Cursor.new(@_viewport)
       @_sprite_contents = Sprite.new(@_viewport)
@@ -748,16 +721,14 @@ module XPA_Window
     end
     
     def _update_background
-      background_width = @_rect.width - 2 *
-          XPA_Window::Config::BACKGROUND_MARGIN
-      background_height = @_rect.height - 2 *
-          XPA_Window::Config::BACKGROUND_MARGIN
+      background_width = @_rect.width - 2 * XPA_Window::Config::BACKGROUND_MARGIN
+      background_height = @_rect.height - 2 * XPA_Window::Config::BACKGROUND_MARGIN
       if @_stretch
         @_sprite_background.bitmap = Skin.get_background(@_windowskin,
-            background_width, background_height)
+          background_width, background_height)
       else
         @_sprite_background.bitmap = Skin.get_tiled_background(@_windowskin,
-            background_width, background_height)
+          background_width, background_height)
         @_sprite_background.src_rect.width = background_width
         @_sprite_background.src_rect.height = background_height
       end
@@ -838,42 +809,38 @@ module XPA_Window
       self._update_horizontal_borders
       self._update_vertical_borders
       @_sprite_corners.each_index {|i|
-          @_sprite_corners[i].bitmap = @_windowskin
-          if @_windowskin != nil
-            @_sprite_corners[i].src_rect = XPA_Window::Config::CORNER_RECTS[i]
-          end
+        @_sprite_corners[i].bitmap = @_windowskin
+        if @_windowskin != nil
+          @_sprite_corners[i].src_rect = XPA_Window::Config::CORNER_RECTS[i]
+        end
       }
       @_sprite_pause.bitmap = @_windowskin
       self._update_pause_src_rect
       @_sprite_arrows.each_index {|i|
-          @_sprite_arrows[i].bitmap = @_windowskin
-          @_sprite_arrows[i].src_rect = XPA_Window::Config::ARROW_RECTS[i]
+        @_sprite_arrows[i].bitmap = @_windowskin
+        @_sprite_arrows[i].src_rect = XPA_Window::Config::ARROW_RECTS[i]
       }
     end
     
     def _update_horizontal_borders
-      width = @_rect.width -
-          2 * XPA_Window::Config::BORDER_THICKNESS
+      width = @_rect.width - 2 * XPA_Window::Config::BORDER_THICKNESS
       (0...(XPA_Window::Config::MAX_BORDERS / 2)).each {|i|
-          @_sprite_borders[i].bitmap = Skin.get_border_horizontal(@_windowskin,
-              i, width)
-          if @_sprite_borders[i].bitmap != nil
-            @_sprite_borders[i].src_rect.set(0, 0, width,
-                XPA_Window::Config::BORDER_RECTS[i].height)
-          end
+        @_sprite_borders[i].bitmap = Skin.get_border_horizontal(@_windowskin, i, width)
+        if @_sprite_borders[i].bitmap != nil
+          @_sprite_borders[i].src_rect.set(0, 0, width,
+            XPA_Window::Config::BORDER_RECTS[i].height)
+        end
       }
     end
     
     def _update_vertical_borders
-      height = @_rect.height -
-          2 * XPA_Window::Config::BORDER_THICKNESS
+      height = @_rect.height - 2 * XPA_Window::Config::BORDER_THICKNESS
       (0...(XPA_Window::Config::MAX_BORDERS / 2)).each {|i|
-          @_sprite_borders[i + 2].bitmap = Skin.get_border_vertical(
-              @_windowskin, i, height)
-          if @_sprite_borders[i + 2].bitmap != nil
-            @_sprite_borders[i + 2].src_rect.set(0, 0,
-                XPA_Window::Config::BORDER_RECTS[i + 2].width, height)
-          end
+        @_sprite_borders[i + 2].bitmap = Skin.get_border_vertical(@_windowskin, i, height)
+        if @_sprite_borders[i + 2].bitmap != nil
+          @_sprite_borders[i + 2].src_rect.set(0, 0,
+            XPA_Window::Config::BORDER_RECTS[i + 2].width, height)
+        end
       }
     end
     
@@ -905,8 +872,8 @@ module XPA_Window
     end
     
     def _update_pause_src_rect
-      index = @_pause_update_count % (XPA_Window::Config::PAUSE_FRAME_STEP * 4) /
-          XPA_Window::Config::PAUSE_FRAME_STEP
+      index = @_pause_update_count % 
+        (XPA_Window::Config::PAUSE_FRAME_STEP * 4) / XPA_Window::Config::PAUSE_FRAME_STEP
       @_sprite_pause.src_rect = XPA_Window::Config::PAUSE_RECTS[index]
     end
     
@@ -918,47 +885,41 @@ module XPA_Window
     end
     
     def _update_arrow_up
-      @_sprite_arrows[0].x = (@_rect.x + @_rect.width -
-          XPA_Window::Config::ARROW_RECTS[0].width) / 2
+      @_sprite_arrows[0].x = (@_rect.x + @_rect.width - XPA_Window::Config::ARROW_RECTS[0].width) / 2
       @_sprite_arrows[0].y = @_rect.y + XPA_Window::Config::ARROW_OFFSET
-      @_sprite_arrows[0].visible = (@_sprite_contents.bitmap != nil &&
-          @_sprite_contents.src_rect.y > 0)
+      @_sprite_arrows[0].visible = (@_sprite_contents.bitmap != nil && @_sprite_contents.src_rect.y > 0)
     end
     
     def _update_arrow_down
-      @_sprite_arrows[1].x = (@_rect.x + @_rect.width -
-          XPA_Window::Config::ARROW_RECTS[1].width) / 2
+      @_sprite_arrows[1].x = (@_rect.x + @_rect.width - XPA_Window::Config::ARROW_RECTS[1].width) / 2
       @_sprite_arrows[1].y = @_rect.y + @_rect.height -
-          XPA_Window::Config::ARROW_RECTS[1].height -
-          XPA_Window::Config::ARROW_OFFSET
+        XPA_Window::Config::ARROW_RECTS[1].height -
+        XPA_Window::Config::ARROW_OFFSET
       @_sprite_arrows[1].visible = (@_sprite_contents.bitmap != nil &&
-          @_sprite_contents.bitmap.height - @_sprite_contents.src_rect.y >
-              @_rect.height - XPA_Window::Config::MARGIN * 2)
+        @_sprite_contents.bitmap.height - @_sprite_contents.src_rect.y >
+        @_rect.height - XPA_Window::Config::MARGIN * 2)
     end
     
     def _update_arrow_left
       @_sprite_arrows[2].x = @_rect.x + XPA_Window::Config::ARROW_OFFSET
       @_sprite_arrows[2].y = (@_rect.y + @_rect.height -
-          XPA_Window::Config::ARROW_RECTS[2].width) / 2
+        XPA_Window::Config::ARROW_RECTS[2].width) / 2
       @_sprite_arrows[2].visible = (@_sprite_contents.bitmap != nil &&
-          @_sprite_contents.src_rect.x > 0)
+        @_sprite_contents.src_rect.x > 0)
     end
     
     def _update_arrow_right
       @_sprite_arrows[3].x = @_rect.x + @_rect.width -
-          XPA_Window::Config::ARROW_RECTS[3].width -
-          XPA_Window::Config::ARROW_OFFSET
+        XPA_Window::Config::ARROW_RECTS[3].width -
+        XPA_Window::Config::ARROW_OFFSET
       @_sprite_arrows[3].y = (@_rect.y + @_rect.height -
-          XPA_Window::Config::ARROW_RECTS[3].height) / 2
+        XPA_Window::Config::ARROW_RECTS[3].height) / 2
       @_sprite_arrows[3].visible = (@_sprite_contents.bitmap != nil &&
-          @_sprite_contents.bitmap.width - @_sprite_contents.src_rect.x >
-              @_rect.width - XPA_Window::Config::MARGIN * 2)
+        @_sprite_contents.bitmap.width - @_sprite_contents.src_rect.x >
+        @_rect.width - XPA_Window::Config::MARGIN * 2)
     end
-    
   end
-  
 end
-
 Window = XPA_Window::Window
 
 end

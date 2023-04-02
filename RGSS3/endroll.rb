@@ -111,7 +111,7 @@ class Scene_Endroll
       "The Matchmakers 2nd (ザ・マッチメイカァズ2nd)",
       "http://osabisi.sakura.ne.jp/m2/",
       
-      "",
+      "", "",
       "TRANSLATION",
       "",
       "Benedikt Grosser (Sephy)",
@@ -210,7 +210,6 @@ class Scene_Endroll
     sprite.bitmap = Bitmap.new(s_width, @height)
     sprite.bitmap.font.name  = Endr::FONT
     sprite.bitmap.font.size  = Endr::SIZE
-    sprite.bitmap.font.color = Endr::COLOR
     string = @text[@index].chomp
     
     unless string[/wait([0-9]*)/].nil?

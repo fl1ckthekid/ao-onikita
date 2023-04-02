@@ -17,6 +17,7 @@ if XPA_CONFIG::EXIT_MESSAGE_INTERCEPT
     end
   end
 end
+
 if XPA_CONFIG::KEEP_GAME_RUNNING
   module NoDeactivateDLL
     Start = Win32API.new("NoDeactivate", "Start", 'P', '')
