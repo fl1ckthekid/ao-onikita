@@ -30,8 +30,7 @@ class Scene_Battle
     if $data_system.battle_transition == ""
       Graphics.transition(20)
     else
-      Graphics.transition(40, "Graphics/Transitions/" +
-        $data_system.battle_transition)
+      Graphics.transition(40, "Graphics/Transitions/" + $data_system.battle_transition)
     end
     start_phase1
     loop do

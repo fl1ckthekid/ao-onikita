@@ -92,7 +92,6 @@ Scene_Shop.rb
 Scene_Name.rb
 Scene_Gameover.rb
 Scene_Debug.rb
-AntiLag.rb
 RPGgraphic.rb
 Damagepop.rb
 XRXS.rb
@@ -108,5 +107,6 @@ kioku&hukki.rb
 endroll.rb
 [XPA] Load RTP.rb
 [XPA] Extra Add-ons.rb
+AntiLag.rb
 [XPA] Tilemap.rb
 [XPA] Main.rb
