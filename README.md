@@ -26,5 +26,7 @@ Place the abacus in the frame where you find the map (or just use your imaginati
 Each dot on top in each column that touches the line adds 5 to the column value,
 and each group of consecutive dots on the bottom that touches the line adds 1 to the value.
 # Credits
-Original game by *noprops*
-- Twitter: http://twitter.com/noprops
+- Original game by *noprops*
+  - Twitter: http://twitter.com/noprops
+- English translation by -Benedikt Grosser (Sephy)-
+  - http://musik.ardw.de
