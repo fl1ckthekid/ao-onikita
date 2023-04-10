@@ -1,6 +1,12 @@
 # Prerequisites
 - The RPG Maker XP RTP is required to run this game. Download here: http://dl.degica.com/rpgmakerweb/run-time-packages/xp_rtp104e.exe | DON'T DOWNLOAD THE .DLL FROM OTHER WEBSITES.
 - If you're using Joiplay, the RTP will be automatically downloaded for you by default. (Haven't tested with other Android emulators yet.)
+
+# Platforms
+- Portable
+  - The game in its original state. Made with the RPG Maker XP engine and runs on 48fps. Can run on other platforms with emulation.
+- Win32
+  - The game ported to the RPG Maker VX Ace engine. Runs smoothly; cannot run on other platforms without a Win32 environment.
 # Help on difficult puzzles
 - Piano puzzle
 
@@ -20,5 +26,7 @@ Place the abacus in the frame where you find the map (or just use your imaginati
 Each dot on top in each column that touches the line adds 5 to the column value,
 and each group of consecutive dots on the bottom that touches the line adds 1 to the value.
 # Credits
-Original game by *noprops*
-- Twitter: http://twitter.com/noprops
+- Original game by *noprops*
+  - Twitter: http://twitter.com/noprops
+- English translation by -Benedikt Grosser (Sephy)-
+  - http://musik.ardw.de
