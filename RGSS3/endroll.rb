@@ -1,7 +1,7 @@
 module Endr
   REVERSE = false
 
-  FONT = "MS PGothic"
+  FONT = "Yu Gothic UI"
   SIZE = 17
   COLOR = Color.new(255, 255, 255, 255)
   ALIGN = 0

@@ -92,21 +92,20 @@ Scene_Shop.rb
 Scene_Name.rb
 Scene_Gameover.rb
 Scene_Debug.rb
-RPGgraphic.rb
+File_Test.rb
 Damagepop.rb
 XRXS.rb
 battler_attachment.rb
 XRXS9msg.rb
 AXmsg.rb
 CO-X.rb
-idou_route.rb
-testplay.rb
-fadein.rb
+MoveRoute.rb
+Testplay.rb
+AudioFX.rb
 title.rb
 kioku&hukki.rb
-endroll.rb
-[XPA] Load RTP.rb
-[XPA] Extra Add-ons.rb
-AntiLag.rb
-[XPA] Tilemap.rb
-[XPA] Main.rb
+Endroll.rb
+RTPLoader.rb
+Anti_Lag.rb
+Tilemap.rb
+Main.rb

@@ -10,7 +10,7 @@ SCREEN_RESOLUTION = [640, 480]
 # 1 and 5. If using a large resolution, lowering the number of priority layers
 # will help in reducing the lag.
 #-------------------------------------------------------------------------------
-MAX_PRIORITY_LAYERS = 3
+MAX_PRIORITY_LAYERS = 5
 
 #-------------------------------------------------------------------------------
 # If using a larger resolution than 640x480, the default weather effects will
@@ -29,7 +29,7 @@ WEATHER_ADJUSTMENT = false
 # Note that the custom Plane class will be enabled in order to create this
 # effect regardless of your resolution size.
 #-------------------------------------------------------------------------------
-DISABLE_WRAP = false
+DISABLE_WRAP = true
 
 #-------------------------------------------------------------------------------
 # Choose a form of fullscreen for your game. The available choices are:

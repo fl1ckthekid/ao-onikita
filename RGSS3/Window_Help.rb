@@ -1,37 +1,20 @@
-class Window_Help < Window_Base
+class Window_Target < Window_Selectable
   def initialize
-    super(0, 0, 640, 64)
+    super(0, 0, 336, 480)
     self.contents = Bitmap.new(width - 32, height - 32)
+    self.z += 10
+    @item_max = $game_party.actors.size
+    refresh
   end
-  def set_text(text, align = 0)
-    if text != @text or align != @align
-      self.contents.clear
-      self.contents.font.color = normal_color
-      self.contents.draw_text(4, 0, self.width - 40, 32, text, align)
-      @text = text
-      @align = align
-      @actor = nil
-    end
-    self.visible = true
+  def refresh
   end
-  def set_actor(actor)
-    if actor != @actor
-      self.contents.clear
-      draw_actor_name(actor, 4, 0)
-      draw_actor_state(actor, 140, 0)
-      draw_actor_hp(actor, 284, 0)
-      draw_actor_sp(actor, 460, 0)
-      @actor = actor
-      @text = nil
-      self.visible = true
+  def update_cursor_rect
+    if @index <= -2
+      self.cursor_rect.set(0, (@index + 10) * 116, self.width - 32, 96)
+    elsif @index == -1
+      self.cursor_rect.set(0, 0, self.width - 32, @item_max * 116 - 20)
+    else
+      self.cursor_rect.set(0, @index * 116, self.width - 32, 96)
     end
-  end
-  def set_enemy(enemy)
-    text = enemy.name
-    state_text = make_battler_state_text(enemy, 112, false)
-    if state_text != ""
-      text += "  " + state_text
-    end
-    set_text(text, 1)
   end
 end

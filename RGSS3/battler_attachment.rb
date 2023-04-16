@@ -1,97 +1,15 @@
 module XAS_BA
+  SENSOR_DEFAULT_RANGE = 3
+  SENSOR_SELF_SWITCH = "D"
   ENEMY_ID_VARIABLE_ID = 25
-  SENSOR_DEFAULT_RANGE =  3
-  SENSOR_SELF_SWITCH  = "D"
-  ATTACK_ACTIONS = {
-    1=>1, 2=>7, 3=>8, 4=>9, 5=>25, 6=>9, 7=>25,
-    8=>26, 9=>8, 10=>27, 11=>28, 12=>9, 13=>8, 14=>8, 15=>9, 16=>10, 17=>8, 18=>9, 19=>28,
-    31=>21, 32=>22, 33=>23, 34=>24, 35=>25,
-    42=>10
-  }
-
-  OBJECTAL_ATTACKER_ID = 2
-  DAMAGE_FLASH_DURATION = 60
+  KNOCK_BACK_DURATION = 0
+  KNOCK_BACK_SPEED = 0
+  DAMAGE_FLASH_DURATION = 0
   GAMEOVER_SWITCH_ID = 50
-  KNOCK_BACK_SPEED = 5
-  KNOCK_BACK_DURATION = 28
-  DEFEAT_NUMBER_ID = 0
-  
-  ITEMDROP_SE = RPG::AudioFile.new("056-Right02", 70, 140)
-  SHIELD_SE = RPG::AudioFile.new("097-Attack09", 80, 150)
-end
-
-module XAS_BA_ENEMY
-  SHILED_DIRECTIONS = { 99=>[2] }
-  SHILED_ACTIONS = { 99=>[1, 2] }
-  KNOCK_BACK_DISABLES = [3, 7, 8, 11, 12, 14, 19, 26, 27]
-  BODY_SQUARE = {
-    9=>1, 10=>1, 13=>1, 15=>1, 16=>1, 17=>1, 18=>1, 20=>1, 21=>1, 22=>1,
-    23=>1, 24=>1, 25=>1, 26=>1, 28=>1, 29=>1, 30=>1, 31=>1, 32=>1, 33=>1
-  }
-  DEFEAT_SWITCH_IDS = {
-    4=>23, 7=>63, 9=>65, 10=>39, 13=>41, 14=>42, 15=>45, 16=>75,
-    17=>77, 18=>78, 20=>59, 21=>80, 23=>97,24=>98, 27=>52, 28=>120, 29=>121, 30=>122,
-    31=>123, 32=>124, 33=>125
-  }
-end
-
-class Game_Event < Game_Character
-  def enemy_defeat_process(enemy)
-    last_level = $game_player.battler.level
-    $game_party.gain_exp(enemy.exp)
-    $game_party.gain_gold(enemy.gold)
-    
-    if last_level < $game_player.battler.level
-      $game_player.battler.damage = "Level up!"
-      $game_player.battler.damage_pop = true
-      $game_player.need_refresh = true
-    end
-    
-    id = XAS_BA::DEFEAT_NUMBER_ID
-    $game_variables[id] += 1 if id != 0
-    
-    switch_id = XAS_BA_ENEMY::DEFEAT_SWITCH_IDS[self.enemy_id]
-    if switch_id != nil
-      $game_switches[switch_id] = true
-      $game_map.refresh 
-    end
-  end
-end
-
-class Game_Party
-  def gain_exp(exp)
-    for i in 0...$game_party.actors.size
-      actor = $game_party.actors[i]
-      if actor.cant_get_exp? == false
-        actor.exp += exp
-      end
-    end
-  end
 end
 
 class Game_Player < Game_Character
   attr_accessor:need_refresh
-end
-
-module XAS_BA_BULLET_SP_COST
-  def shoot_bullet(action_id)
-    skill_id = XAS_BA::ATTACK_ACTIONS[action_id]
-    skill = skill_id == nil ? nil : $data_skills[skill_id]
-    if skill != nil
-      sp_cost  = skill.sp_cost
-      if self.battler.sp < sp_cost
-        $game_system.se_play($data_system.buzzer_se)
-        return false
-      end
-      self.battler.sp -= sp_cost
-      self.need_refresh = true
-    end
-    return super
-  end
-end
-
-class Game_Player < Game_Character
-  include XAS_BA_BULLET_SP_COST
 end
 
 module XRXS_EnemySensor
@@ -133,13 +51,10 @@ module XRXS_BattlerAttachment
       if self.battler.damage.to_i > 0
         self.blow(attacker.direction, 1)
       end
-      
-      self.battler.hiblink_duration = self.damage_hiblink_duration
       if self.is_a?(Game_Player)
         self.need_refresh = true
       end
     end
-    
     
     @xrxs64c_defeat_done = false if @xrxs64c_defeat_done == nil
     if not @xrxs64c_defeat_done and self.battler.dead?
@@ -148,73 +63,6 @@ module XRXS_BattlerAttachment
     end
   end
 
-  def action_effect(bullet, action_id)
-    return super if self.battler.nil?
-    if self.battler.hiblink_duration.to_i > 0 and
-        not bullet.action.ignore_invincible
-      return false
-    end
-    
-    skill_id = XAS_BA::ATTACK_ACTIONS[action_id]
-    return if skill_id == nil
-    
-    user = bullet.action.user
-    attacker = (user == nil ? nil : user.battler)
-    attacker = $game_actors[XAS_BA::OBJECTAL_ATTACKER_ID] if attacker == nil
-    result = (user != nil and not self.battler.dead?)
-    skill_id = XAS_BA::ATTACK_ACTIONS[action_id]
-    
-    dirset = [2, 6, 8, 4]
-    dir_index = (dirset.index(bullet.direction) + 2) % 4
-    shield = self.shield_actions.include?(action_id)
-    for direction in self.shield_directions
-      dir_index2 = (dirset.index(self.direction) + dirset.index(direction)) % 4
-      shield |= dirset[dir_index2] == dirset[dir_index]
-    end
-    if shield
-      $game_system.se_play(XAS_BA::SHIELD_SE)
-      user.blow(dirset[dir_index])
-      super
-      return true
-    end
-    
-    if result
-      skill = $data_skills[skill_id]
-      if skill_id == 2 and $game_switches[120]
-        skill = skill.dup
-        skill.power = 8
-      end
-      
-      $game_temp.in_battle = true
-      self.battler.skill_effect(attacker, skill)
-      self.battler.damage_pop = true
-      $game_temp.in_battle = false
-      
-      if self.battler.damage.to_i > 0
-        d = bullet.direction
-        p = bullet.action.blow_power.to_i
-        self.blow(d, p)
-        self.battler.hiblink_duration = self.damage_hiblink_duration
-      end
-      
-      if self.is_a?(Game_Player)
-        self.need_refresh = true
-      end
-    end
-    
-    if not @xrxs64c_defeat_done and self.battler.dead?
-      defeat_process
-      @xrxs64c_defeat_done = true
-    end
-    return (super or result) 
-  end
-
-  def shield_directions
-    return []
-  end
-  def shield_actions
-    return []
-  end
   def knock_back_disable
     return false
   end
@@ -457,86 +305,6 @@ class Sprite_Character < RPG::Sprite
   end
 end
 
-module XAS_BA_ItemDrop
-  def defeat_process
-    super
-    if self.battler.is_a?(Game_Enemy) and self.battler.dead?
-      treasure = nil
-      enemy = self.battler
-      if rand(100) < enemy.treasure_prob
-        if enemy.item_id > 0
-          treasure = $data_items[enemy.item_id]
-        end
-        if enemy.weapon_id > 0
-          treasure = $data_weapons[enemy.weapon_id]
-        end
-        if enemy.armor_id > 0
-          treasure = $data_armors[enemy.armor_id]
-        end
-      end
-      if treasure != nil
-        item_se = XAS_BA::ITEMDROP_SE
-        opecode = 
-          treasure.is_a?(RPG::Item) ? 126 :
-          treasure.is_a?(RPG::Weapon) ? 127 :
-          treasure.is_a?(RPG::Armor) ? 128 :
-          nil
-        list = []
-        if opecode != nil
-          list[0] = RPG::EventCommand.new(opecode, 0, [treasure.id,0,0,1])
-          list[1] = RPG::EventCommand.new(250, 0, [item_se]) 
-          list[2] = RPG::EventCommand.new(116, 0, [])
-        end
-        list.push(RPG::EventCommand.new) 
-
-        command = RPG::MoveCommand.new
-        command.code = 14
-        command.parameters = [0,0]
-        route = RPG::MoveRoute.new
-        route.repeat = false
-        route.list = [command, RPG::MoveCommand.new]
-
-        page = RPG::Event::Page.new
-        page.move_type = 3
-        page.move_route = route
-        page.move_frequency = 6
-        page.always_on_top = true
-        page.trigger = 1
-        page.list = list
-
-        event = RPG::Event.new(self.x, self.y)
-        event.pages = [page]
-        token = Token_Event.new($game_map.id, event)
-        token.icon_name = treasure.icon_name
-
-        $game_map.add_token(token)
-      end
-    end
-  end
-end
-
-class Game_Event < Game_Character
-  include XAS_BA_ItemDrop
-end
-
-class Game_Character
-  attr_accessor:icon_name
-end
-
-class Sprite_Character < RPG::Sprite
-  alias xrxs_charactericon_update update
-  def update
-    xrxs_charactericon_update
-    if @character.icon_name != nil 
-      @icon_name = @character.icon_name
-      self.bitmap = RPG::Cache.icon(@icon_name)
-      self.src_rect.set(0, 0, 24, 24)
-      self.ox = 12
-      self.oy = 24
-    end
-  end
-end
-
 class Game_Character
   def blow(d, power = 1)
     return if self.knock_back_disable
@@ -550,40 +318,4 @@ class Game_Character
     @knock_back_duration = XAS_BA::KNOCK_BACK_DURATION
     @move_speed = XAS_BA::KNOCK_BACK_SPEED
   end
-
-  alias xrxs64c_nb_update update
-  def update
-    @stop_count = -1 if self.knockbacking? or self.dead?
-    xrxs64c_nb_update
-    if self.knockbacking?
-      @pattern = 0
-      @knock_back_duration -= 1
-      if @knock_back_duration <= 0
-        @knock_back_duration = nil
-        @move_speed = @knock_back_prespeed
-        @knock_back_prespeed = nil
-      end
-      return
-    end
-  end
-  def knockbacking?
-    return @knock_back_duration != nil
-  end
-  def collapsing?
-    return self.collapse_duration.to_i > 0
-  end
-end
-
-module XAS_DamageStop
-  def acting?
-    return (super or self.knockbacking? or self.collapsing?)
-  end
-end
-
-class Game_Player < Game_Character
-  include XAS_DamageStop
-end
-
-class Game_Event < Game_Character
-  include XAS_DamageStop
 end

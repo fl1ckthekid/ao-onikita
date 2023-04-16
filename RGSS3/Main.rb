@@ -1,3 +1,10 @@
+File.open('Game.ini', 'r+') do |f|
+  ini_contents = f.read
+  ini_contents.gsub!(/Library=RGSS\d+\.dll/, 'Library=System\\RGSS301.dll')
+  f.rewind
+  f.write(ini_contents)
+end
+
 def traceback_report
   backtrace = $!.backtrace.clone
   backtrace.each{|bt|
@@ -15,7 +22,7 @@ def raise_traceback_error
   end
 end
 
-begin 
+begin
   rgss_main {
     Font.default_outline = XPA_CONFIG::FONT_OUTLINE
     Graphics.resize_screen(SCREEN_RESOLUTION[0], SCREEN_RESOLUTION[1]) 

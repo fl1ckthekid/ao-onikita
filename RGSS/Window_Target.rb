@@ -7,18 +7,6 @@ class Window_Target < Window_Selectable
     refresh
   end
   def refresh
-    self.contents.clear
-    for i in 0...$game_party.actors.size
-      x = 4
-      y = i * 116
-      actor = $game_party.actors[i]
-      draw_actor_name(actor, x, y)
-      draw_actor_class(actor, x + 144, y)
-      draw_actor_level(actor, x + 8, y + 32)
-      draw_actor_state(actor, x + 8, y + 64)
-      draw_actor_hp(actor, x + 152, y + 32)
-      draw_actor_sp(actor, x + 152, y + 64)
-    end
   end
   def update_cursor_rect
     if @index <= -2

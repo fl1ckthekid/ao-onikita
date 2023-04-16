@@ -9,7 +9,6 @@ class Window_Status < Window_Base
     self.contents.clear
     draw_actor_graphic(@actor, 40, 130)
     draw_actor_name(@actor, 4, -20)
-    self.contents.font.color = system_color
     draw_actor_class(@actor, 4, 20)
   end
   def dummy

@@ -2,7 +2,7 @@ module XPA_CONFIG
   
   # In RGSS3, text can now have outlines. This is normally enabled by default.
   # Some people prefer to keep the outlines disabled to keep the XP look.
-  FONT_OUTLINE = true
+  FONT_OUTLINE = false
   
   # Allows your game to run in debug mode from the editor. It is recommended to 
   # disable this when distributing your game, although it is not necessary.

@@ -10,7 +10,7 @@ module SIMP
   c = Color.new(255, 255, 255, 255)
   TITLE_SIMPLE_COLOR = c
   TITLE_SIMPLE_SIZE = 50
-  TITLE_SIMPLE_FONT = "MS Mincho"
+  TITLE_SIMPLE_FONT = ""
   TITLE_SKIN = "wskin_n"
   TITLE_X = 320 - 192 / 2
   TITLE_Y = 188
