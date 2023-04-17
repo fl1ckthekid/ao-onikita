@@ -30,3 +30,6 @@ and each group of consecutive dots on the bottom that touches the line adds 1 to
   - Twitter: http://twitter.com/noprops
 - English translation by -Benedikt Grosser (Sephy)-
   - http://musik.ardw.de
+- XP to VX Ace conversion script
+  - Made by KK20
+  - "XP Ace Tilemap" is licensed under [![Creative Commons - Attribution-NonCommercial-ShareAlike 3.0 Unported License](https://creativecommons.org/licenses/by-nc-sa/3.0/)]
